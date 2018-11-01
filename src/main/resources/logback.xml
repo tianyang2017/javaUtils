@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+	<property name="log.base" value="../javaUtilslogs" />
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+
+		<encoder>
+			<pattern>%date %.-5level %class{25} ----------->> %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="logfile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+		<File>${log.base}/info.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}/info.%d{yyyy-MM-dd}.log.zip
+			</FileNamePattern>
+			<MaxHistory>10</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date [%thread] %.-5level %class{25} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="errorfile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.base}/error.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}/error.%d{yyyy-MM-dd}.log.zip
+			</FileNamePattern>
+			<MaxHistory>10</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date [%thread] %.-5level %class{25} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="slowSql"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.base}/slowSql.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}/slowSql.%d{yyyy-MM-dd}.log.zip
+			</FileNamePattern>
+			<MaxHistory>10</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date [%thread] %.-5level %logger{25} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="heartbeat"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.base}/heartbeat.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}/heartbeat.%d{yyyy-MM-dd}.log.zip
+			</FileNamePattern>
+			<MaxHistory>5</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date [%thread] - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<!-- 启动或停止服务器的时候的输出内容 -->
+	<!-- <appender name="servercyclefile" -->
+	<!-- class="ch.qos.logback.core.rolling.RollingFileAppender"> -->
+
+	<!-- <File>${log.base}/servercycle.log</File> -->
+	<!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> -->
+	<!-- <FileNamePattern>${log.base}/servercycle.%d{yyyy-MM-dd}.log.zip -->
+	<!-- </FileNamePattern> -->
+	<!-- <MaxHistory>10</MaxHistory> -->
+	<!-- </rollingPolicy> -->
+	<!-- <encoder> -->
+	<!-- <pattern>%date [%-8logger] - %msg%n</pattern> -->
+	<!-- </encoder> -->
+	<!-- </appender> -->
+
+	<!-- Action中的方法执行后的日志记录 -->
+	<!-- <appender name="actionexecute" -->
+	<!-- class="ch.qos.logback.core.rolling.RollingFileAppender"> -->
+
+	<!-- <File>${log.base}/actionexec.log</File> -->
+	<!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> -->
+	<!-- <FileNamePattern>${log.base}/actionexec.%d{yyyy-MM-dd}.log.zip -->
+	<!-- </FileNamePattern> -->
+	<!-- <! - - keep 30 days worth of history - - > -->
+	<!-- <MaxHistory>30</MaxHistory> -->
+	<!-- </rollingPolicy> -->
+	<!-- <encoder> -->
+	<!-- <pattern>%date - %msg%n</pattern> -->
+	<!-- </encoder> -->
+	<!-- </appender> -->
+
+	<!-- logger级别 TRACE < DEBUG < INFO < WARN < ERROR -->
+	<logger name="TransactionException" level="DEBUG">
+		<appender-ref ref="errorfile" />
+	</logger>
+
+	<logger name="com" level="ERROR" />
+	<logger name="com.ciic" level="INFO" />
+	<logger name="com.ciic.ehr" level="INFO" />
+	<logger name="valid" level="ERROR" />
+	<logger name="metadata" level="ERROR" />
+
+	<logger name="com.alibaba.dubbo" level="ERROR" />
+	<logger name="com.alibaba.dubbo.registry.zookeeper" level="ERROR" />
+
+	<logger name="org" level="ERROR" />
+	<logger name="org.quartz" level="INFO" />
+	<logger name="org.apache.zookeeper" level="ERROR" />
+	<logger name="org.apache" level="DEBUG" />
+	<logger name="com.netflix.curator" level="OFF" />
+	<logger name="org.apache.ibatis" level="ERROR" />
+	<logger name="org.mybatis.spring" level="ERROR" />
+	<logger name="org.springframework" level="WARN" />
+
+	<logger name="druid.sql" level="ERROR" />
+	<logger name="com.alibaba.druid.filter.stat.StatFilter" level="ERROR" additivity="false">
+		<appender-ref ref="slowSql" />
+	</logger>
+	<logger name="com.ciic.ehr.acquisition.service.SuspendServiceImpl" level="INFO" additivity="false">
+		<appender-ref ref="heartbeat" />
+	</logger>
+
+	<!-- <logger name="STARTUP" level="DEBUG"> -->
+	<!-- <appender-ref ref="servercyclefile" /> -->
+	<!-- </logger> -->
+	<!-- <logger name="SHUTDOWN" level="DEBUG"> -->
+	<!-- <appender-ref ref="servercyclefile" /> -->
+	<!-- </logger> -->
+	<!-- <logger name="ActionExecute" level="DEBUG"> -->
+	<!-- <appender-ref ref="actionexecute" /> -->
+	<!-- </logger> -->
+
+	<root level="ERROR">
+		<appender-ref ref="errorfile" />
+		<appender-ref ref="logfile" />
+ 		<appender-ref ref="stdout" />
+	</root>
+
+</configuration>
